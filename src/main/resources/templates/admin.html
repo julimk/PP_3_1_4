@@ -108,7 +108,7 @@
                                                                     data-dismiss="modal"></button>
                                                         </div>
 
-                                                        <form th:method="POST" th:action="@{/admin/update}"
+                                                        <form th:method="PUT" th:action="@{/admin/update}"
                                                               th:object="${edit_user}">
 
                                                             <div class="modal-body w-50 mx-auto">
@@ -190,7 +190,7 @@
                                                             <button type="button" class="btn-close"
                                                                     data-dismiss="modal"></button>
                                                         </div>
-                                                        <form th:method="POST"
+                                                        <form th:method="DELETE"
                                                               th:action="@{/admin/delete/{id}(id=${user.getId()})}"
                                                               th:object="${edit_user}">
                                                             <div class="modal-body w-50 mx-auto">

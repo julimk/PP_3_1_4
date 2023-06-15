@@ -62,11 +62,6 @@ public class User implements UserDetails {
         this.username = username;
     }
 
-    public void addRole(Role role) {
-        roles.add(role);
-        role.addUsers(this);
-    }
-
     public String getNameRole() {
         return getUsername() + " with roles: " + getRolesString();
     }
