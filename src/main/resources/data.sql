@@ -1,8 +1,8 @@
-INSERT INTO users (username, password, email)
-VALUES ('admin', '$2a$12$UoXxDkr.6z/OMCAkkL/5geoPGV0m6Up98ORVXlbEtW2leILpfUlPq','a@mail.ru'); /* password: root */
+INSERT INTO users (age, first_name, last_name, password, username)
+VALUES ('35', 'admin', 'admin', '$2a$12$UoXxDkr.6z/OMCAkkL/5geoPGV0m6Up98ORVXlbEtW2leILpfUlPq', 'admin@mail.ru'); /* password: root */
 
-INSERT INTO users (username, password, email)
-VALUES ('user', '$2a$12$UoXxDkr.6z/OMCAkkL/5geoPGV0m6Up98ORVXlbEtW2leILpfUlPq', 'a@mail.ru'); /* password: root */
+INSERT INTO users (age, first_name, last_name, password, username)
+VALUES ('30', 'user', 'user', '$2a$12$UoXxDkr.6z/OMCAkkL/5geoPGV0m6Up98ORVXlbEtW2leILpfUlPq', 'user@mail.ru'); /* password: root */
 
 INSERT INTO roles (name)
 VALUES ('ROLE_ADMIN');

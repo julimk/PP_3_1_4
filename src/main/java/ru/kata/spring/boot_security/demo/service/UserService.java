@@ -11,10 +11,12 @@ public interface UserService {
 
     User findByUsername(String username);
 
-    void save(User user);
+    void save(User user, List<Long> roleIds);
 
     void deleteUserByUsername(String username);
 
     void deleteById(Long id);
+
+    public void update(Long id, User updatedUser, List<Long> roleIds);
 
 }

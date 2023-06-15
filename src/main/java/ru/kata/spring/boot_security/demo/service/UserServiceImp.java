@@ -4,21 +4,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import ru.kata.spring.boot_security.demo.dao.RoleRepository;
 import ru.kata.spring.boot_security.demo.dao.UserRepository;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
-import java.util.List;
+import java.util.*;
 
 @Service
 public class UserServiceImp implements UserService {
 
     private final UserRepository userRepository;
 
+    private final RoleRepository roleRepository;
+
     private final PasswordEncoder encoder;
 
     @Autowired
-    public UserServiceImp(UserRepository userRepository, PasswordEncoder encoder) {
+    public UserServiceImp(UserRepository userRepository, RoleRepository roleRepository, PasswordEncoder encoder) {
         this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.encoder = encoder;
     }
 
@@ -36,14 +41,17 @@ public class UserServiceImp implements UserService {
 
     @Override
     @Transactional(readOnly = true)
-    public User findByUsername(String username) {
-        return userRepository.findByUsername(username);
+    public User findByUsername(String email) {
+        return userRepository.findByUsername(email);
     }
 
     @Override
     @Transactional
-    public void save(User user) {
+    public void save(User user,  List<Long> roleIds) {
         user.setPassword(encoder.encode(user.getPassword()));
+        List<Role> roles = roleRepository.findAllById(roleIds);
+        Set<Role> roleSet = new HashSet<>(roles);
+        user.setRoles(roleSet);
         userRepository.save(user);
     }
 
@@ -57,6 +65,26 @@ public class UserServiceImp implements UserService {
     @Transactional
     public void deleteById(Long id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional
+    public void update(Long id, User updatedUser, List<Long> roleIds) {
+        Optional<User> originalUser = userRepository.findById(id);
+
+        if (originalUser.isPresent()) {
+            User user = originalUser.get();
+            user.setUsername(updatedUser.getUsername());
+            user.setPassword(encoder.encode(updatedUser.getPassword()));
+            user.setAge(updatedUser.getAge());
+            user.setFirstName(updatedUser.getFirstName());
+            user.setLastName(updatedUser.getLastName());
+            user.setAuthority(updatedUser.getAuthority());
+
+            Set<Role> roleSet = new HashSet<>(roleRepository.findAllById(roleIds));
+            user.setRoles(roleSet);
+            userRepository.save(user);
+        }
     }
 
 }

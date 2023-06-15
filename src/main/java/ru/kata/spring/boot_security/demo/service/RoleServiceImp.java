@@ -36,9 +36,16 @@ public class RoleServiceImp implements RoleService {
         return roleRepository.getById(id);
     }
 
+
     @Override
     @Transactional
     public void addRole(Role role) {
         roleRepository.save(role);
+    }
+
+    @Override
+    @Transactional
+    public void removeAllRoles() {
+        roleRepository.deleteAll();
     }
 }

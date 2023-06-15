@@ -5,10 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.*;
-import java.util.Collection;
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity(name = "User")
@@ -22,9 +19,18 @@ public class User implements UserDetails {
     @Column(name = "username", unique = true)
     private String username;
 
+    private String firstName;
+
+
+    private String lastName;
+
+    @Column(name = "age")
+    private Byte age;
+
+
+    @Column(name = "password")
     private String password;
 
-    private String email;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = {
             CascadeType.PERSIST,
@@ -38,24 +44,61 @@ public class User implements UserDetails {
     public User() {
     }
 
-    public User(String username, String password, String email, Set<Role> roles) {
-        this.username = username;
+    public User(Long id, String firstName, String lastName, Byte age, String password, String username, Set<Role> roles) {
+        this.id = id;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
         this.password = password;
-        this.email = email;
+        this.username = username;
         this.roles = roles;
     }
 
-    public User(Long id, String username, String password, String email, Set<Role> roles) {
-        this.id = id;
-        this.username = username;
+    public User(String firstName, String lastName, Byte age, String password, String username) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.age = age;
         this.password = password;
-        this.email = email;
-        this.roles = roles;
+        this.username = username;
     }
 
     public void addRole(Role role) {
         roles.add(role);
         role.addUsers(this);
+    }
+
+    public String getNameRole() {
+        return getUsername() + " with roles: " + getRolesString();
+    }
+
+    public String getRolesString() {
+        String roleSet = roles.stream().map(Role::getName).collect(Collectors.joining(" "));
+        return roleSet.replaceAll("ROLE_", "");
+    }
+
+    public Set<Role> getAuthority() {
+        return roles;
+    }
+
+    public void setAuthority(Set<Role> roles) {
+        this.roles = roles;
+    }
+
+    public Optional<Role> getRole() {
+        return roles.stream().findFirst();
+    }
+
+    public void setAuthority(Role role) {
+        this.roles.add(role);
+    }
+
+    public String allRolesReturn() {
+        Set<Role> roles = this.roles;
+        StringBuilder strRole = new StringBuilder();
+        for (Role r : roles) {
+            strRole.append(r.getName()).append(" ");
+        }
+        return strRole.toString();
     }
 
     @Override
@@ -78,9 +121,6 @@ public class User implements UserDetails {
         return true;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -98,11 +138,6 @@ public class User implements UserDetails {
         this.id = id;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-
     public String getPassword() {
         return password;
     }
@@ -111,13 +146,6 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public Collection<Role> getRoles() {
         return roles;
@@ -127,9 +155,37 @@ public class User implements UserDetails {
         this.roles = roles;
     }
 
-    public String getRolesString() {
-        String roleSet = roles.stream().map(Role::getName).collect(Collectors.joining(", "));
-        return roleSet.toLowerCase().replaceAll("role_", "");
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public Byte getAge() {
+        return age;
+    }
+
+    public void setAge(Byte age) {
+        this.age = age;
+    }
+
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     @Override
@@ -137,27 +193,24 @@ public class User implements UserDetails {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return Objects.equals(id, user.id) &&
-                Objects.equals(username, user.username) &&
-                Objects.equals(password, user.password) &&
-                Objects.equals(email, user.email) &&
-                Objects.equals(roles, user.roles);
+        return Objects.equals(id, user.id) && Objects.equals(firstName, user.firstName) && Objects.equals(lastName, user.lastName) && Objects.equals(age, user.age) && Objects.equals(password, user.password) && Objects.equals(username, user.username) && Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, password, email, roles);
+        return Objects.hash(id, firstName, lastName, age, password, username, roles);
     }
 
     @Override
     public String toString() {
         return "User{" +
                 "id=" + id +
-                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", age=" + age +
                 ", password='" + password + '\'' +
-                ", email='" + email + '\'' +
+                ", username='" + username + '\'' +
                 ", roles=" + roles +
                 '}';
     }
-
 }
